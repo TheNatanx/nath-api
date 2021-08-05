@@ -1,6 +1,6 @@
-import mongoose, {Schema} from "mongoose";
+const mongoose = require("mongoose");
 
-const codingProblem = new Schema({
+const codingProblem = mongoose.Schema({
     number: {
         type: Number,
         required: true
@@ -16,12 +16,4 @@ const codingProblem = new Schema({
     }
 }, {_id: true});
 
-const codingProblemModel = mongoose.model("codingProblem", codingProblem, 'DailyCodingProblems')
-
-// let awesome_instance = new codingProblemModel({ number: 3, difficulty: "Easy", statement: "Hey this is my problem :)" });
-//
-// // Save the new model instance, passing a callback
-// awesome_instance.save(function (err) {
-//     if (err) return handleError(err);
-//     // saved!
-// });
+module.exports = mongoose.model("codingProblem", codingProblem, 'DailyCodingProblems')
