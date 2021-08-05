@@ -1,14 +1,9 @@
-let express = require('express');
-let router = express.Router();
+const app = require('../app');
 
-router.get('/', function(req, res, next) {
-  console.log("test")
-  res.send('respond with a resource');
-});
+async function routes(app, options) {
+  app.get('/', (req, res) => {
+    res.code(200).send("c'est la racine fraté");
+  });
+}
 
-router.get('/coding-problems', (req, res) => {
-  console.log(req.body);
-  res.send(req);
-})
-
-module.exports = router;
+module.exports = routes;

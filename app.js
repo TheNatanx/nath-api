@@ -1,30 +1,47 @@
-const express = require('express');
-const cookieParser = require('cookie-parser');
-const logger = require('morgan');
-const mongoose = require('mongoose');
-const bodyParser = require('body-parser')
 require("dotenv").config();
 
+const app = require('fastify')({
+    logger: true,
+});
+const fastifyEnv = require('fastify-env');
+const routes = require('./routes/router');
+const mongoDB = require('./plugins/mongo-db');
 const port = 3000;
-const mongoDB = process.env.MONGODB;
 
-mongoose.connect(mongoDB, {useNewUrlParser: true, useUnifiedTopology: true});
-const db = mongoose.connection;
+app.register(fastifyEnv, {
+    dotenv: true,
+    schema: {
+        type: 'object',
+        required: [ 'MONGODB' ],
+        properties: {
+            MONGODB: {
+                type: 'string',
+                default: ''
+            }
+        }
+    }
+});
+app.after(err => err?console.log(err):console.log('Env Plugin is ready.'))
 
-const router = require('./routes/router');
+app.register(routes);
+app.after(err => err?console.log(err):console.log('Plugin for our routes is ready'));
 
-const app = express();
+app.register(mongoDB);
+app.after(err => err?console.log(err):console.log('Plugin for MongoDB is ready'));
 
-app.use(logger('dev'));
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use('/', router);
+app.ready(err => err?console.log(err):console.log('All plugins are ready'));
 
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+app.setErrorHandler((error, req, res) => {
+    if (error.validation) {
+        res.status(422).send(new Error('validation failed'))
+    }
+});
 
-app.listen(port, () => {
+app.listen(port, (err) => {
+    if (err) {
+        app.log.error(err);
+        process.exit(1)
+    }
     console.log(`App listening at http://localhost:${port}`)
 })
 
