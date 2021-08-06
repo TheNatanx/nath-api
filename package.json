@@ -3,16 +3,14 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node app.js"
+    "start": "nodemon app.js"
   },
   "dependencies": {
-    "cookie-parser": "~1.4.4",
-    "debug": "~2.6.9",
     "dotenv": "^10.0.0",
     "fastify": "^3.20.1",
     "fastify-env": "^2.1.1",
-    "fastify-mongodb": "^4.0.0",
     "fastify-plugin": "^3.0.0",
+    "mongoose": "^5.13.5",
     "nodemon": "^2.0.12"
   }
 }
