@@ -1,6 +1,7 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
-const codingProblem = mongoose.Schema({
+const codingProblem = new Schema({
     number: {
         type: Number,
         required: true
@@ -16,4 +17,4 @@ const codingProblem = mongoose.Schema({
     }
 }, {_id: true});
 
-module.exports = mongoose.model("codingProblem", codingProblem, 'DailyCodingProblems')
+module.exports = mongoose.model("codingProblem", codingProblem, 'DailyCodingProblems');

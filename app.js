@@ -1,23 +1,28 @@
 require("dotenv").config();
 
-const express = require('express');
+const app = require('fastify')({
+    logger: true
+});
 const mongoose = require('mongoose');
-const router = require('./routes/router');
-
-const app = express();
+const routes = require('./routes/router');
 const port = 3000;
-const mongoDB = process.env.MONGODB;
 
-mongoose.connect(mongoDB, {useNewUrlParser: true, useUnifiedTopology: true}).then(() => console.log("Successfully connected to MongoDB"));
-const db = mongoose.connection;
+mongoose.connect(process.env.MONGODB, {useNewUrlParser: true, useUnifiedTopology: true}).then(() => {
+    console.log("Successfully connected to MongoDB")
+}).catch(() => {
+    console.log("Unable to connect to MongoDB")
+});
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use('/', router);
+app.register(routes);
+app.after(err => err?console.log(err):console.log('Plugin for our routes is ready'));
 
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+app.ready(err => err?console.log(err):console.log('All plugins are ready'));
 
-app.listen(port, () => {
+app.listen(port, (err) => {
+    if (err) {
+        app.log.error(err);
+        process.exit(1)
+    }
     console.log(`App listening at http://localhost:${port}`)
 })
 
